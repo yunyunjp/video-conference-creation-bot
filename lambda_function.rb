@@ -39,6 +39,10 @@ def lambda_handler
 
   res = http.request(req)
   join_url = JSON.parse(res.body)['join_url']
+
+  daily_person = fetch_daily_person(ENV['SPREAD_SHEET_URL'])
+
+  notify_slack(join_url, daily_person)
 end
 
 def fetch_daily_person(uri)
@@ -56,4 +60,25 @@ def fetch_daily_person(uri)
   end
 end
 
-pp fetch_daily_person(ENV['SPREAD_SHEET_URL'])
+def notify_slack(join_url, daily_person)
+  uri = URI.parse(ENV['WEBHOOK_URL'])
+
+  slack_text = <<-EOS
+    <!here> 会議が始まります。
+    担当者：#{daily_person}
+
+    Zoom会議には以下URLで入れます。
+    #{join_url}
+  EOS
+
+   payload = {
+    username: "デイリーお知らせbot",
+    icon_emoji: ":spiral_calendar_pad",
+    channel: "#会議担当者の通知",
+    text: slack_text
+  }.to_json
+
+   Net::HTTP.post_form(uri, { payload: payload })
+end
+
+pp lambda_handler
