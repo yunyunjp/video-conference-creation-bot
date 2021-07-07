@@ -11,10 +11,10 @@ Dotenv.load
 def lambda_handler
   join_url = Zoom.reservation_meeting
 
-  daily_person = SpreadSheet.fetch_daily_person(ENV['SPREAD_SHEET_URL'])
+  daily_person = SpreadSheet.fetch_daily_person
 
   slack = Slack.new(join_url, daily_person)
-  slack.notify_slack
+  slack.notify
 end
 
 pp lambda_handler

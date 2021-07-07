@@ -1,6 +1,6 @@
 class SpreadSheet
   class << self
-    def fetch_daily_person(uri)
+    def fetch_daily_person(uri = ENV['SPREAD_SHEET_URL'])
       uri = URI.parse(uri)
       http = Net::HTTP.new(uri.hostname, uri.port)
       req = Net::HTTP::Get.new(uri.request_uri)
